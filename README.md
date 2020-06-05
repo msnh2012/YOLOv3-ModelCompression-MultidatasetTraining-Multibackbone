@@ -22,9 +22,10 @@
  2020年4月7日 实现基于mobilenetv3的两种backbone模型，YOLOv3-mobilenet和YOLOv3tiny-mobilene-small
  ，提供预训练模型，将正常剪植算法扩展到基于mobilenet的两个模型和YOLOv3tiny模型，删除tiny剪植。
 
- 2020年4月27日更新 完成了mobilenetv3的模型预训练，但是发现模型结构上有些问题需要再调整一下重新训练。
- 添加了层剪植方法，方法来自于[tanluren/yolov3-channel-and-layer-pruning/yolov3](https://github.com/tanluren/yolov3-channel-and-layer-pruning)，
+ 2020年4月27日 更新mobilenetv3的模型预训练，添加了层剪植方法，方法来自于[tanluren/yolov3-channel-and-layer-pruning/yolov3](https://github.com/tanluren/yolov3-channel-and-layer-pruning)，
  感谢大佬的分享。
+ 
+ 2020年5月22日 更新了[ultralytics/yolov3](https://github.com/ultralytics/yolov3)为YOLOv3源码仓库的最新优化，更新YOLOv4网络结构和权重文件。
 
 # 环境部署
 1.由于采用[ultralytics/yolov3](https://github.com/ultralytics/yolov3)的YOLO实现，环境搭建详见[ultralytics/yolov3](https://github.com/ultralytics/yolov3)。这里简要说明：
@@ -72,19 +73,24 @@
 # 一、多数据集训练
 本项目提供针对YOLOv3仓库的预处理数据集，配置文件(.cfg)，数据集索引文件(.data)，数据集类别文件(.names)以及使用k-means算法重新聚类的anchor box尺寸(包含用于yolov3的9框和tiny-yolov3的6框)。
 
-基于Darknet-53的YOLOv3-608网络mAP
+mAP统计
 
-|<center>数据集</center>|<center>mAP</center>|
-| --- |--- |
+|<center>数据集</center>|<center>YOLOv3-608</center>|<center>YOLOv4-640</center>|<center>YOLOv3-mobilenet-640</center>|
+| --- |--- |--- |--- |
 |<center>Dior遥感数据集</center>|<center>0.56</center>|
 |<center>bdd100k自动驾驶数据集</center>|<center>0.38</center>|
-|<center>visdrone无人机航拍数据集</center>|<center>0.286</center>|
+|<center>visdrone无人机航拍数据集</center>|<center>0.273</center>|<center>0.324</center>|<center>0.348</center>|
+
 
 下载地址如下，下载并解压后将文件夹拷贝至data目录下即可使用。
 
-- [COCO2017](https://pan.baidu.com/s/1UXKs7ilSQi_P6ijiLgKTUg)
+- [COCO2017](https://pan.baidu.com/s/1KysFL6AmdbCBq4tHDebqlw)
   
-  提取码：4f06
+  提取码：hjln
+
+- [COCO2014](https://pan.baidu.com/s/1EoXOR77yEVokqPCaxg8QGg)
+  
+  提取码：rhqx
 
 - [COCO权重文件](https://pan.baidu.com/s/1JZylwRQIgAd389oWUu0djg)
 
@@ -93,7 +99,7 @@
 训练指令
 
 ```bash
-python3 train.py --data cfg/coco2017.data --batch-size 30 --weights weights/yolov3-608.weights -pt --cfg cfg/yolov3/yolov3.cfg --img-size 608 --epochs 200
+python3 train.py --data data/coco2017.data --batch-size ... --weights weights/yolov3-608.weights -pt --cfg cfg/yolov3/yolov3.cfg --img-size ... --epochs ...
 ```
 
 
@@ -108,7 +114,7 @@ python3 train.py --data cfg/coco2017.data --batch-size 30 --weights weights/yolo
 训练指令
 
 ```bash
-python3 train.py --data cfg/dior.data --batch-size 30 --weights weights/yolov3-608.weights -pt --cfg cfg/yolov3/yolov3-onDIOR.cfg --img-size 608 --epochs 200
+python3 train.py --data data/dior.data --batch-size ... --weights weights/yolov3-608.weights -pt --cfg cfg/yolov3/yolov3-onDIOR.cfg --img-size ... --epochs ...
 ```
 
 
@@ -123,21 +129,29 @@ python3 train.py --data cfg/dior.data --batch-size 30 --weights weights/yolov3-6
 训练指令
 
 ```bash
-python3 train.py --data cfg/bdd100k.data --batch-size 20 --weights weights/yolov3-608.weights -pt --cfg cfg/yolov3/yolov3-bdd100k.cfg --img-size 608 --epochs 200
+python3 train.py --data data/bdd100k.data --batch-size ... --weights weights/yolov3-608.weights -pt --cfg cfg/yolov3/yolov3-bdd100k.cfg --img-size ... --epochs ...
 ```
 
 - [visdrone数据集](https://pan.baidu.com/s/1CPGmS3tLI7my4_m7qDhB4Q)
   
   提取码：dy4c
   
-- [visdrone权重文件](https://pan.baidu.com/s/1Sf20FGAa-vLF8CCLpKSIug)
+- [YOLOv3-visdrone权重文件](https://pan.baidu.com/s/1N4qDP3b0tt8TIWuTFefDEw)
 
-  提取码：ynuf
+  提取码：87lf
+
+- [YOLOv4-visdrone权重文件](https://pan.baidu.com/s/1zOFyt_AFiNk0fAFa8yE9RQ)
+
+  提取码：xblu
   
+ - [YOLOv3-mobilenet-visdrone权重文件](https://pan.baidu.com/s/1BHC8b6xHmTuN8h74QJFt1g)
+
+  提取码：fb6y
+
 训练指令
 
 ```bash
-python train.py --data cfg/visdrone.data --batch-size 20 --weights weights/yolov3-608.weights -pt --cfg cfg/yolov3/yolov3-visdrone.cfg  --img-size 608 --epochs 200 
+python train.py --data data/visdrone.data --batch-size ... --weights weights/yolov3-608.weights -pt --cfg cfg/yolov3/yolov3-visdrone.cfg  --img-size ... --epochs ...
 ```
 
 ## 1、Dior数据集
@@ -166,24 +180,27 @@ VisDrone2019数据集由中国天津大学机器学习和数据挖掘实验室�
 
 [官网](http://www.aiskyeye.com/)
 
-### 检测效果
+### 检测效果YOLOv3
 ![检测效果](https://github.com/SpursLipu/YOLOv3-ModelCompression-MultidatasetTraining/blob/master/image_in_readme/4.jpg)
+
+### 检测效果YOLOv4
 ![检测效果](https://github.com/SpursLipu/YOLOv3-ModelCompression-MultidatasetTraining/blob/master/image_in_readme/5.jpg)
+![检测效果](https://github.com/SpursLipu/YOLOv3-ModelCompression-MultidatasetTraining/blob/master/image_in_readme/6.png)
 
 # 二、多种网络结构
 在mobilenetv3基础上设计了两种网络结构
 
-|结构名称 |<center>backbone参数量</center>|<center>后处理参数量</center> |<center>总参数量</center> |<center>coco2017mAP</center> |
-| --- | --- | --- | --- | --- |
-|YOLOv3 |38.74M  |20.39M  |59.13M  |0.582  |
-|YOLOv3tiny |6.00M  |2.45M  |8.45M  |0.326  |
-|YOLOv3-mobilenet |2.84M  |20.25M  |23.09M  |0.448  |
-|YOLOv3tiny-mobilenet-small |0.92M  |2.00M  |2.92M  |0.332  |
-
+|结构名称 |<center>backbone参数量</center>|<center>后处理参数量</center> |<center>总参数量</center> |<center>GFLOPs</center> |<center>mAP0.5</center> |<center>mAP0.5:0.95</center> |
+| --- | --- | --- | --- | --- | --- | --- |
+|YOLOv3                      |38.74M  |20.39M  |59.13M  |117.3   |0.580  |0.340  |
+|YOLOv3tiny                  |6.00M   |2.45M   |8.45M   |9.9     |0.347  |0.168  |
+|YOLOv3-mobilenetv3          |2.84M   |20.25M  |23.09M  |32.2    |0.459  |0.282  |
+|YOLOv3tiny-mobilenetv3-small|0.92M   |2.00M   |2.92M   |2.9     |0.396  |0.213  |
+|YOLOv4                      |-       |-       |61.35M  |107.1   |0.650  |0.438  |
 ## 训练指令
 1、YOLOv3
 ```bash
-python3 train.py --data data/coco2017.data --batch-size 32 --accumulate 1 -pt --weights weights/yolov3-608.weights --cfg cfg/yolov3/yolov3.cfg --img_size 608
+python3 train.py --data data/coco2017.data --batch-size ... -pt --weights weights/yolov3-608.weights --cfg cfg/yolov3/yolov3.cfg --img_size ...
 ```
 
 权重文件下载
@@ -193,7 +210,7 @@ python3 train.py --data data/coco2017.data --batch-size 32 --accumulate 1 -pt --
 
 2、YOLOv3tiny
 ```bash
-python3 train.py --data data/coco2017.data --batch-size 32 --accumulate 1 -pt --weights weights/yolov3tiny.weights --cfg cfg/yolov3tiny/yolov3-tiny.cfg --img_size 608
+python3 train.py --data data/coco2017.data --batch-size ... -pt --weights weights/yolov3tiny.weights --cfg cfg/yolov3tiny/yolov3-tiny.cfg --img_size ...
 ```
 
 - [COCO预训练权重文件](https://pan.baidu.com/s/1iWGxdjR3TWxEe37__msyRA)
@@ -202,7 +219,7 @@ python3 train.py --data data/coco2017.data --batch-size 32 --accumulate 1 -pt --
   
 3、YOLOv3tiny-mobilenet-small
 ```bash
-python3 train.py --data data/coco2017.data --batch-size 32 --accumulate 1 -pt --weights weights/yolov3tiny-mobilenet-small.weights --cfg cfg/yolov3tiny-mobilenet-small/yolov3tiny-mobilenet-small-coco.cfg --img_size 608
+python3 train.py --data data/coco2017.data --batch-size ... -pt --weights weights/yolov3tiny-mobilenet-small.weights --cfg cfg/yolov3tiny-mobilenet-small/yolov3tiny-mobilenet-small-coco.cfg --img_size ...
 ```
 
 - [COCO预训练权重文件](https://pan.baidu.com/s/1vWRcn5A95PoYhBtB2rWH8A)
@@ -211,13 +228,22 @@ python3 train.py --data data/coco2017.data --batch-size 32 --accumulate 1 -pt --
 
 4、YOLOv3-mobilenet
 ```bash
-python3 train.py --data data/coco2017.data --batch-size 32 --accumulate 1 -pt --weights weights/yolov3-mobilenet.weights --cfg cfg/yolov3-mobilenet/yolov3-mobilenet-coco.cfg --img_size 608
+python3 train.py --data data/coco2017.data --batch-size ... -pt --weights weights/yolov3-mobilenet.weights --cfg cfg/yolov3-mobilenet/yolov3-mobilenet-coco.cfg --img_size ...
 ```
 
 - [COCO预训练权重文件](https://pan.baidu.com/s/1hR2SYvb5mjh_ysepCtFnmw)
 
   提取码：iayy
 
+5、YOLOv4
+```bash
+python3 train.py --data data/coco2017.data --batch-size ... -pt --weights weights/yolov4.weights --cfg cfg/yolov4/yolov4.cfg --img_size ...
+```
+
+- [COCO预训练权重文件](https://pan.baidu.com/s/1jAGNNC19oQhAIgBfUrkzmQ)
+
+  提取码：njdg
+  
 # 三、模型压缩
 
 ## 1、剪植
@@ -237,7 +263,7 @@ python3 train.py --data data/coco2017.data --batch-size 32 --accumulate 1 -pt --
 1.正常训练
 
 ```bash
-python3 train.py --data ... -pt --batch-size 32 --accumulate 1 --weights ... --cfg ...
+python3 train.py --data ... -pt --batch-size ... --weights ... --cfg ...
 ```
 
 2.稀疏化训练
@@ -322,7 +348,7 @@ XNOR-Net: ImageNet Classification Using Binary Convolutional Neural Networks
 量化指令范例：
 
 ```bash
-python train.py --data cfg/bdd100k.data --batch-size 20 --weights weights/best.pt --cfg cfg/yolov3/yolov3-bdd100k.cfg --img-size 608 --epochs 200 --quantized 1 --qlayers 72
+python train.py --data ... --batch-size ... --weights ... --cfg ... --img-size ... --epochs ... --quantized 1 --qlayers 72
 ```
 
 ## 3、知识蒸馏
@@ -344,7 +370,7 @@ Distilling the Knowledge in a Neural Network
 蒸馏指令范例：
 
 ```bash
-python train.py --data cfg/bdd100k.data --batch-size 20 --weights weights/last.pt --cfg cfg/yolov3/yolov3-bdd100k.cfg --img-size 608 --epochs 150 --quantized 1 --qlayers 72 --t_cfg cfg/yolov3/yolov3-bdd100k.cfg --t_weights weights/BDDbest.pt
+python train.py --data ... --batch-size ... --weights ... --cfg ... --img-size ... --epochs ... --quantized 1 --qlayers 72 --t_cfg ... --t_weights ...
 ```
 
 该指令将量化与蒸馏相结合，通过未量化的教师网络提升量化的学生网络，提高学生网络的mAP。
